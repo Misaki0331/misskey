@@ -118,7 +118,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	keepOriginalUploading: {
 		where: 'account',
-		default: false,
+		default: true, //オリジナルを常にアップロードするように
 	},
 	memo: {
 		where: 'account',
