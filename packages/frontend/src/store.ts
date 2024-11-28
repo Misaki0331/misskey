@@ -118,7 +118,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	keepOriginalUploading: {
 		where: 'account',
-		default: false,
+		default: true, // ユーザーが勝手にWebpに圧縮しないように
 	},
 	memo: {
 		where: 'account',
