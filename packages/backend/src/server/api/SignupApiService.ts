@@ -199,9 +199,18 @@ export class SignupApiService {
 
 			const link = `${this.config.url}/signup-complete/${code}`;
 
-			this.emailService.sendEmail(emailAddress!, 'Signup',
-				`To complete signup, please click this link:<br><a href="${link}">${link}</a>`,
-				`To complete signup, please click this link: ${link}`);
+			this.emailService.sendEmail(emailAddress!, `【${this.config.url}】ユーザー登録のご案内`,
+				`${this.config.url} へようこそ！<br>`+
+				`下記URLをクリックして、ユーザー登録を完了してください。<br><br>`+
+				`メールアドレス認証用URL : <a href="${link}">${link}</a><br>`+
+				`※本メールは送信専用になります。<br>`+
+				`※本メール内容に心当たりがない場合は、メールを削除してください。`,
+
+				`${this.config.url} へようこそ！\n`+
+				`下記URLをクリックして、ユーザー登録を完了してください。\n\n`+
+				`メールアドレス認証用URL : ${link}`+
+			  `※本メールは送信専用になります。\n`+
+				`※本メール内容に心当たりがない場合は、メールを削除してください。`);
 
 			if (ticket) {
 				await this.registrationTicketsRepository.update(ticket.id, {
