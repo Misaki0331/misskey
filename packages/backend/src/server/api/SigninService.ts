@@ -51,36 +51,36 @@ export class SigninService {
 			});
 
 			this.globalEventService.publishMainStream(user.id, 'signin', await this.signinEntityService.pack(record));
-
+			const host = this.config.url.replace("https://","");
 			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
 			if (profile.email && profile.emailVerified) {
-				this.emailService.sendEmail(profile.email, `【${this.config.url}】新規ログインのお知らせ`,
+				this.emailService.sendEmail(profile.email, `【${host}】新規ログインのお知らせ`,
 					`${user.name??`@${user.username}`} 様<br><br>`+
-					`いつも${this.config.url}をご利用いただきありがとうございます。<br><br>`+
+					`いつも${host}をご利用いただきありがとうございます。<br><br>`+
 					`お使いのアカウント(@${user.username})に対する新しいログインがありましたのでお知らせいたします。<br><br>`+
 					`ログイン時刻 : ${new Date().toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo',})}<br>`+
 					`IPアドレス : ${request.ip}<br><br>`+
 					`<strong>●ユーザー自身がログインした場合</strong><br>`+
 					`このメールは無視して構いません。<br>`+
-					`引き続き${this.config.url}をお楽しみください<br><br>`+
+					`引き続き${host}をお楽しみください<br><br>`+
 					`<strong>●このログインに心当たりがない場合</strong><br>`+
 					`すぐにパスワードを変更とログイントークンを再生成し、アカウントを保護してください。<br><br>`+
 					`また、パスワード変更やログイン履歴等の各種情報は以下のURLから確認できます。<br>`+
-					`<a href="https://${this.config.url}/settings/security">https://${this.config.url}/settings/security</a><br><br>`+
+					`<a href="${this.config.url}/settings/security">${this.config.url}/settings/security</a><br><br>`+
 					`※本メールは送信専用になります。`
 					,
 					`${user.name??`@${user.username}`} 様\n\n`+
-					`いつも${this.config.url}をご利用いただきありがとうございます。\n\n`+
+					`いつも${host}をご利用いただきありがとうございます。\n\n`+
 					`お使いのアカウント(@${user.username})に対する新しいログインがありましたのでお知らせいたします。\n\n`+
 					`ログイン時刻 : ${new Date().toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo',})}\n`+
 					`IPアドレス : ${request.ip}\n\n`+
 					`●ユーザー自身がログインした場合\n`+
 					`このメールは無視して構いません。\n`+
-					`引き続き${this.config.url}をお楽しみください\n\n`+
+					`引き続き$${host}をお楽しみください\n\n`+
 					`●このログインに心当たりがない場合\n`+
 					`すぐにパスワードを変更とログイントークンを再生成し、アカウントを保護してください。\n\n`+
 					`また、パスワード変更やログイン履歴等の各種情報は以下のURLから確認できます。\n`+
-					`https://${this.config.url}/settings/security \n\n`+
+					`${this.config.url}/settings/security \n\n`+
 					`※本メールは送信専用になります。`);
 			}
 		});
