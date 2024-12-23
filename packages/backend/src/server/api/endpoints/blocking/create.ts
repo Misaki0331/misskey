@@ -7,6 +7,7 @@ import ms from 'ms';
 import { Inject, Injectable } from '@nestjs/common';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { UsersRepository, BlockingsRepository } from '@/models/_.js';
+import { RoleService } from '@/core/RoleService.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import { UserBlockingService } from '@/core/UserBlockingService.js';
 import { DI } from '@/di-symbols.js';
@@ -36,6 +37,12 @@ export const meta = {
 			message: 'Blockee is yourself.',
 			code: 'BLOCKEE_IS_YOURSELF',
 			id: '88b19138-f28d-42c0-8499-6a31bbd0fdc6',
+		},
+
+		blockeeIsAdmin: {
+			message: 'You can not blocking administrator.',
+			code: 'BLOCKEE_IS_ADMIN',
+			id: '7D7039C4-3105-09A0-8F64-34B1F8B3766C',
 		},
 
 		alreadyBlocking: {
@@ -69,6 +76,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		@Inject(DI.blockingsRepository)
 		private blockingsRepository: BlockingsRepository,
 
+		private roleService: RoleService,
+
 		private userEntityService: UserEntityService,
 		private getterService: GetterService,
 		private userBlockingService: UserBlockingService,
@@ -86,6 +95,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				if (err.id === '15348ddd-432d-49c2-8a5a-8069753becff') throw new ApiError(meta.errors.noSuchUser);
 				throw err;
 			});
+
+			// 管理者のブロックを拒否
+			const user = await this.usersRepository.findOneByOrFail({ id: ps.userId });
+			if (await this.roleService.isAdministrator(user)) {
+				throw new ApiError(meta.errors.blockeeIsAdmin);
+			}
 
 			// Check if already blocking
 			const exist = await this.blockingsRepository.exists({
