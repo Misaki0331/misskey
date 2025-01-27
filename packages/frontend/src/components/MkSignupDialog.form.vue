@@ -297,7 +297,7 @@ async function onSubmit(): Promise<void> {
 		}
 	} else if (res) {
 		await res.json()
-			.then((json: { error?: string }) => onSignupApiError(json.error))
+			.then((json: { message?: string }) => onSignupApiError(json.message))
 			.catch(() => onSignupApiError());
 	} else {
 		onSignupApiError();
